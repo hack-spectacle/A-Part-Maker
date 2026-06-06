@@ -1,0 +1,42 @@
+local plrs = game:GetService("Players")
+local plr = plrs.LocalPlayer
+local mouse = plr:GetMouse()
+
+-- create new values in SS
+local ss = game:GetService("ReplicatedStorage")
+local btoolval = Instance.new("StringValue", ss)
+btoolval.Name = "MousePos"
+btoolval.Value = mouse.X and mouse.Y
+
+-- update them when the mouse moves
+mouse.Move:Connect(function()
+	btoolval.Value = mouse.X and mouse.Y
+end)
+
+-- create a server script
+local ssc = Instance.new("Script", game:GetService("ServerScriptService"))
+ssc.Name = "BToolServer"
+-- add code in it
+ssc.Source = [[
+local rs = game:GetService("ReplicatedStorage")
+local btoolval = rs:WaitForChild("MousePos")
+
+local function part(mousepos)
+	local part = Instance.new("Part")
+	part.Parent = workspace
+	part.Anchored = true
+	part.CanCollide = false
+	part.Material = "Neon"
+	part.BrickColor = BrickColor.new("Really red")
+	part.CFrame = CFrame.new((mousepos+Vector3.new(0,3,0)),mousepos)
+	part.Size = Vector3.new(1,1,1)
+	game.Debris:AddItem(part,0.5)
+end
+
+mouse.Button1Down:Connect(function()
+	part(mouse.Hit.Position)
+end)
+
+]]
+
+ssc.Disabled = false
